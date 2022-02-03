@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Food_shop_backend.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Food_shop_backend.Context
 {
@@ -8,5 +9,6 @@ namespace Food_shop_backend.Context
         {
 
         }
+        public DbSet<Clientes> Clientes { get; set; }
     }
 }
