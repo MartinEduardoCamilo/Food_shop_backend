@@ -16,5 +16,6 @@ namespace Food_shop_backend.Context
             base.OnConfiguring(optionsBuilder);
         }
         public DbSet<Clientes> Clientes { get; set; }
+        //hola
     }
 }
