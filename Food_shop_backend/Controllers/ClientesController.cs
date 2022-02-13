@@ -1,43 +1,137 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Food_shop_backend.Context;
+using Food_shop_backend.Models;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Food_shop_backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/clientes")]
     [ApiController]
     public class ClientesController : ControllerBase
     {
-        // GET: api/<ClientesController>
+        private readonly Contexto _contexto;
+
+        public ClientesController(Contexto contexto)
+        {
+            _contexto = contexto;
+        }
+
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<Clientes>>> GetCliente()
         {
-            return new string[] { "value1", "value2" };
+            List<Clientes>? clientes;
+            try
+            {
+                clientes = _contexto.Clientes.ToList();
+
+                if (clientes is null)
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                await _contexto.DisposeAsync();
+            }
+            return Ok(clientes);
         }
 
-        // GET api/<ClientesController>/5
+
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult> GetCliente(int id)
         {
-            return "value";
+            Clientes? clientes;
+            try
+            {
+                clientes = await _contexto.Clientes.FindAsync(id);
+                if(clientes is null)
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                await _contexto.DisposeAsync();
+            }
+            return Ok(clientes);
         }
 
-        // POST api/<ClientesController>
         [HttpPost]
-        public void Post([FromBody] string value)
-        {
+        public async Task<ActionResult> PostCliente([FromBody] Clientes clientes)
+        {     
+            try
+            {
+                await _contexto.Clientes.AddAsync(clientes);
+                await _contexto.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+               await _contexto.DisposeAsync();
+            }
+            return Ok();
         }
 
-        // PUT api/<ClientesController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult> PutCliente(int id, [FromBody] Clientes clientes)
         {
+            try
+            {
+                _contexto.Clientes.Update(clientes);
+                await _contexto.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                await _contexto.DisposeAsync();
+            }
+            return Ok();
         }
 
-        // DELETE api/<ClientesController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> DeleteCliente(int id)
         {
+            try
+            {
+                Clientes? clientes = await _contexto.Clientes.FindAsync(id);
+                if (clientes == null)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    _contexto.Clientes.Remove(clientes);
+                    await _contexto.SaveChangesAsync();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                await _contexto.DisposeAsync();
+            }
+            return Ok();
         }
     }
 }

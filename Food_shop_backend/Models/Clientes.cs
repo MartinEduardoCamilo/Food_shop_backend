@@ -10,7 +10,7 @@ namespace Food_shop_backend.Models
         public string Apellido { get; set; }
         public int Edad { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:dd,mm,yyyy}")]
+        [DisplayFormat(DataFormatString = "{dd/MM/yyyy}")]
         public DateTime Nacimiento { get; set; } 
         public string Email { get; set; }
         public int Telefono { get; set; }
