@@ -5,26 +5,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Food_shop_backend.Controllers
 {
-    [Route("api/clientes")]
+    [Route("api/productos")]
     [ApiController]
-    public class ClientesController : ControllerBase
+    public class ProductosController : ControllerBase
     {
         private readonly Contexto _contexto;
-
-        public ClientesController(Contexto contexto)
+        public ProductosController(Contexto contexto)
         {
             _contexto = contexto;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Clientes>>> GetCliente()
+        public async Task<ActionResult<IEnumerable<Producto>>> GetProductos()
         {
-            List<Clientes>? clientes;
+            List<Producto>? productos;
             try
             {
-                clientes = await _contexto.Clientes.ToListAsync();
-
-                if (clientes is null)
+                productos = await _contexto.productos.ToListAsync();
+                if(productos is null)
                 {
                     return NotFound();
                 }
@@ -38,21 +36,16 @@ namespace Food_shop_backend.Controllers
             {
                 await _contexto.DisposeAsync();
             }
-            return Ok(clientes);
+            return Ok(productos);
         }
 
-
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetCliente(int id)
+        public async Task<ActionResult> GetProduto(int id)
         {
-            Clientes? clientes;
+            Producto? produto;
             try
             {
-                clientes = await _contexto.Clientes.FindAsync(id);
-                if(clientes is null)
-                {
-                    return NotFound();
-                }
+                produto = await _contexto.productos.Where(x => x.productoId == id).Include(c=> c.categoria).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -63,35 +56,39 @@ namespace Food_shop_backend.Controllers
             {
                 await _contexto.DisposeAsync();
             }
-            return Ok(clientes);
+            return Ok(produto);
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostCliente([FromBody] Clientes clientes)
-        {     
+        public async Task<ActionResult> PostProducto([FromBody] Producto producto)
+        {
             try
             {
-                await _contexto.Clientes.AddAsync(clientes);
+                await _contexto.productos.AddAsync(producto);
                 await _contexto.SaveChangesAsync();
+
             }
             catch (Exception)
             {
+
                 throw;
             }
             finally
             {
-               await _contexto.DisposeAsync();
+                await _contexto.DisposeAsync();
             }
+
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutCliente(int id, [FromBody] Clientes clientes)
+        public async Task<ActionResult> PutProducto(int id, [FromBody] Producto producto)
         {
             try
             {
-                _contexto.Clientes.Update(clientes);
+                 _contexto.Update(producto);
                 await _contexto.SaveChangesAsync();
+
             }
             catch (Exception)
             {
@@ -100,24 +97,24 @@ namespace Food_shop_backend.Controllers
             }
             finally
             {
-                await _contexto.DisposeAsync();
+                _contexto?.DisposeAsync();
             }
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCliente(int id)
+        public async Task<ActionResult> DeleteProducto(int id)
         {
             try
             {
-                Clientes? clientes = await _contexto.Clientes.FindAsync(id);
-                if (clientes == null)
+                Producto? Producto = await _contexto.productos.FindAsync(id);
+                if(Producto == null)
                 {
                     return BadRequest();
                 }
                 else
                 {
-                    _contexto.Clientes.Remove(clientes);
+                    _contexto.productos.Remove(Producto);
                     await _contexto.SaveChangesAsync();
                 }
             }

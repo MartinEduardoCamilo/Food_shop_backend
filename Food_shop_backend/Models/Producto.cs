@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Food_shop_backend.Models
 {
@@ -11,9 +12,9 @@ namespace Food_shop_backend.Models
         public decimal precio { get; set; }
         [StringLength(45)]
         public string? descripcion { get; set; }
-
+        [ForeignKey("categoriaId")]
         public int categoriaId { get; set; }
-        public Categoria? categoria { get; set; }
+        public virtual Categoria? categoria { get; set; }
 
         public Producto(int productoId, string? nombre, decimal precio, string? descripcion, int categoriaId)
         {

@@ -5,26 +5,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Food_shop_backend.Controllers
 {
-    [Route("api/clientes")]
+    [Route("api/categoria")]
     [ApiController]
-    public class ClientesController : ControllerBase
+    public class CategoriaController : ControllerBase
     {
+
         private readonly Contexto _contexto;
 
-        public ClientesController(Contexto contexto)
+        public CategoriaController(Contexto contexo)
         {
-            _contexto = contexto;
+            _contexto = contexo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Clientes>>> GetCliente()
+        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
         {
-            List<Clientes>? clientes;
+
+            List<Categoria>? categorias;
             try
             {
-                clientes = await _contexto.Clientes.ToListAsync();
-
-                if (clientes is null)
+               categorias = await _contexto.categorias.ToListAsync();
+                if(categorias == null)
                 {
                     return NotFound();
                 }
@@ -38,20 +39,20 @@ namespace Food_shop_backend.Controllers
             {
                 await _contexto.DisposeAsync();
             }
-            return Ok(clientes);
+            return Ok(categorias);
         }
 
-
+      
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetCliente(int id)
+        public async Task<ActionResult> GetCategoria(int id)
         {
-            Clientes? clientes;
+            Categoria? categoria;
             try
             {
-                clientes = await _contexto.Clientes.FindAsync(id);
-                if(clientes is null)
+                categoria = await _contexto.categorias.FindAsync(id);
+                if(categoria == null)
                 {
-                    return NotFound();
+                    return BadRequest();
                 }
             }
             catch (Exception)
@@ -63,34 +64,16 @@ namespace Food_shop_backend.Controllers
             {
                 await _contexto.DisposeAsync();
             }
-            return Ok(clientes);
+            return Ok(categoria);
         }
 
+        
         [HttpPost]
-        public async Task<ActionResult> PostCliente([FromBody] Clientes clientes)
-        {     
-            try
-            {
-                await _contexto.Clientes.AddAsync(clientes);
-                await _contexto.SaveChangesAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            finally
-            {
-               await _contexto.DisposeAsync();
-            }
-            return Ok();
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> PutCliente(int id, [FromBody] Clientes clientes)
+        public async Task<ActionResult> PostCategoria([FromBody] Categoria categoria)
         {
             try
             {
-                _contexto.Clientes.Update(clientes);
+                await _contexto.categorias.AddAsync(categoria);
                 await _contexto.SaveChangesAsync();
             }
             catch (Exception)
@@ -105,19 +88,41 @@ namespace Food_shop_backend.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCliente(int id)
+    
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutCategoria(int id, [FromBody] Categoria categoria)
         {
             try
             {
-                Clientes? clientes = await _contexto.Clientes.FindAsync(id);
-                if (clientes == null)
+                _contexto.categorias.Update(categoria);
+                await _contexto.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                await _contexto.DisposeAsync();
+            }
+            return Ok();
+        }
+
+      
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+               Categoria? categoria = await _contexto.categorias.FindAsync(id);
+                if(categoria == null)
                 {
                     return BadRequest();
                 }
                 else
                 {
-                    _contexto.Clientes.Remove(clientes);
+                    _contexto.categorias.Remove(categoria);
                     await _contexto.SaveChangesAsync();
                 }
             }
